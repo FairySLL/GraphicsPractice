@@ -342,9 +342,14 @@ int main() {
     vec = trans * vec;
     std::cout << vec.x << vec.y << vec.z << std::endl;*/
 
+    /*
     glm::mat4 trans = glm::mat4(1.0f);
     trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
     trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+*/
+
+
+
 
 
 
@@ -372,6 +377,7 @@ int main() {
         glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);*/
        // float offset = 0.5f;
         //ourShader.setFloat("moveRight", offset);
+        /*
         glm::mat4 trans = glm::mat4(1.0f);
 
         unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
@@ -380,9 +386,10 @@ int main() {
         trans = glm::mat4(1.0f);
         trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
         trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+        */
 
 
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+        //glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
         //Texture ----------------------
         glActiveTexture(GL_TEXTURE);
@@ -390,8 +397,38 @@ int main() {
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
+   ourShader.use();
 
-        ourShader.use();
+        //Going 3D
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f,0.0f,0.0f));
+
+        glm::mat4 view = glm::mat4(1.0f);
+        //Translate the scene in the REVERSE direction of where we want to move
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+        glm::mat4 projection;
+        projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+
+        //Get matrix uniform locations
+        unsigned int modelLoc = glGetUniformLocation(ourShader.ID, "model");
+        unsigned int viewLoc = glGetUniformLocation(ourShader.ID, "view");
+        unsigned int projectionLoc = glGetUniformLocation(ourShader.ID, "projection");
+
+        //Pass to shaders (3 ways)
+
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+        //Note: We currently set the proj matrix to each frame, but since the proj matrix
+        //rarely changes it's best practice to set it outside the main loop once
+       // ourShader.setMat4("projection", projection); <- 3rd way, but not implemented in shader.h currently
+        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+
+
+
+
+
         if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
             opac += 0.01f;  // small increment per frame
         if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
@@ -400,13 +437,13 @@ int main() {
 
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
+/*
         trans = glm::mat4(1.0f);
         trans = glm::translate(trans, glm::vec3(-0.5f, 0.5f, 0.0f));
         float scaleAmt = static_cast<float>(sin(glfwGetTime()));
-        trans = glm::scale(trans, glm::vec3(std::abs(scaleAmt), std::abs(scaleAmt), std::abs(scaleAmt)));
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
+        trans = glm::scale(trans, glm::vec3(std::abs(scaleAmt), std::abs(scaleAmt), std::abs(scaleAmt)));*/
+        //glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
         //--------------------------------
      //   glBindVertexArray(VAO);
 //glDrawArrays(GL_TRIANGLES, 0, 3);
