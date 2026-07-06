@@ -9,10 +9,11 @@ uniform sampler2D texture1;
 uniform sampler2D texture2;
 uniform float opacity;
 
-vec2 xFlip = vec2(1.0 - TexCoord.x, TexCoord.y);
+
 
 void main()
 {
+    vec2 xFlip = vec2(1.0 - TexCoord.x, TexCoord.y);
     FragColor = mix(texture(texture1, TexCoord), texture(texture2, xFlip), opacity);
 
 }
