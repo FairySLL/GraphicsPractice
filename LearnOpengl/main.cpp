@@ -19,6 +19,16 @@ void processInput(GLFWwindow *window);
 
 float upDown(GLFWwindow *window, float opac);
 
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+
+float lastX = 400, lastY = 300; //Initialize to middle of screen
+bool firstMouse = true;
+float yaw = -90.0f;
+float pitch;
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+float fov = 45.0f;
+
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
@@ -28,6 +38,7 @@ glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 float deltaTime = 0.0f;
+float lastFrame = 0.0f;
 
 
 int main() {
@@ -188,14 +199,17 @@ int main() {
     ourShader.setInt("texture2", 1);
     float opac = 0.2f;
 
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 
 
     //Rendering loop
     //------------------
     while (!glfwWindowShouldClose(window)) {
 
-        //Variable for dynamic opacity change---
-
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
 
         //input---
         processInput(window);
@@ -223,11 +237,14 @@ int main() {
         glm::mat4 view;
         view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
+        glfwSetCursorPosCallback(window, mouse_callback);
+        glfwSetScrollCallback(window, scroll_callback);
+
 
 
         model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 0.0f, 1.0f));
         //view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-        projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        projection = glm::perspective(glm::radians(fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
         unsigned int modelLoc = glGetUniformLocation(ourShader.ID, "model");
         unsigned int viewLoc = glGetUniformLocation(ourShader.ID, "view");
@@ -283,7 +300,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
 }
 
 void processInput(GLFWwindow *window) {
-    const float cameraSpeed = 0.05f;
+    float cameraSpeed = 2.5f * deltaTime;
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -303,3 +320,46 @@ float upDown(GLFWwindow *window, float opac) {
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
         return opac - 0.1;
 }
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+
+    if (firstMouse) {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos;
+    lastX = xpos;
+    lastY = ypos;
+
+    const float sensitivity = 0.1f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    yaw += xoffset;
+    pitch += yoffset;
+
+    if (pitch > 89.0f)
+        pitch = 89.0f;
+    if (pitch < -89.0f)
+        pitch = 89.0f;
+
+    glm::vec3 direction;
+    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    direction.y = sin(glm::radians(pitch));
+    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    cameraFront = glm::normalize(direction);
+
+
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+    fov -= (float)yoffset;
+    if (fov < 1.0f)
+            fov = 1.0f;
+    if (fov > 45.0f)
+        fov = 45.0f;
+}
+
