@@ -256,7 +256,7 @@ int main() {
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
         //Note: We currently set the proj matrix to each frame, but since the proj matrix
         //rarely changes it's best practice to set it outside the main loop once
-        // ourShader.setMat4("projection", projection); <- 3rd way, but not implemented in shader.h currently
+
        ourShader.setMat4("projection", projection);
 
         //render cube---
