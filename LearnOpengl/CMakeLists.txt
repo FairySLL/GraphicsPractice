@@ -9,7 +9,8 @@ find_package(glfw3 REQUIRED)
 add_executable(LearnOpengl main.cpp src/glad.c
         shader.cpp
         shader.h
-        image.h)
+        image.h
+        camera.h)
 
 target_include_directories(LearnOpengl PRIVATE include)
 
