@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 4.2)
-project(LearnOpengl)
+project(OpenGLAimTrainer)
 
 set(CMAKE_CXX_STANDARD 20)
 
