@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <string>
 
 //GLM
 #include <glm/glm/glm.hpp>
@@ -65,8 +66,16 @@ int main() {
 
     glEnable(GL_DEPTH_TEST);
 
-    Shader ourShader("/home/fairysl/dev/Graphics/GraphicsPractice/LearnOpengl/shaders.vert",
-                     "/home/fairysl/dev/Graphics/GraphicsPractice/LearnOpengl/shaders.frag");
+    //Attempting to fix relative pathing issue
+
+//std:: cout << "Resources dir: " << RESOURCES_DIR << std::endl;
+    std:: string vertPath = std::string(RESOURCES_DIR) + "shaders.vert";
+    //std:: cout << "vertPath: " << std::string(RESOURCES_DIR) + "shaders.vert" + "shaders.vert" << std::endl;
+    std:: string fragPath = std::string(RESOURCES_DIR) + "shaders.frag";
+    //std:: cout << "Resources dir: " << std::string(RESOURCES_DIR) + "shaders.frag" << std::endl;
+
+    Shader ourShader(vertPath.c_str(),
+                     fragPath.c_str());
 
     float vertices[] = {
         -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
@@ -160,7 +169,8 @@ int main() {
     //load and generate the texture
     int width, height, nrChannels;
     stbi_set_flip_vertically_on_load(true);
-    unsigned char *data = stbi_load("/home/fairysl/dev/Graphics/GraphicsPractice/LearnOpengl/container.jpg", &width,
+    std:: string contPath = std::string(RESOURCES_DIR) + "container.jpg";
+    unsigned char *data = stbi_load(contPath.c_str(), &width,
                                     &height, &nrChannels, 0);
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -181,7 +191,8 @@ int main() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    data = stbi_load("/home/fairysl/dev/Graphics/GraphicsPractice/LearnOpengl/awesomeface.png", &width, &height,
+    std:: string facePath = std::string(RESOURCES_DIR) + "awesomeface.png";
+    data = stbi_load(facePath.c_str(), &width, &height,
                      &nrChannels, 0);
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
