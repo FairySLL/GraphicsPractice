@@ -38,6 +38,8 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 
+
+
 int main() {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -82,9 +84,9 @@ int main() {
                         crossFPath.c_str());
 
     float crosshairV[] = {
-        0.0, 0.02, 0.0, //Top
-        -0.02, -0.02, 0.0, //bottom left
-        0.02, -0.02, 0.0 //bottom right
+        0.0, 0.04, 0.0, //Top
+        -0.04, -0.04, 0.0, //bottom left
+        0.04, -0.04, 0.0 //bottom right
     };
 
 
