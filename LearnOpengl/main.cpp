@@ -38,7 +38,8 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-bool pressToDie = false;
+
+
 
 
 int main() {
@@ -243,6 +244,9 @@ int main() {
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+    bool shouldRender[10];
+    for(int j = 0; j < 10; j++)
+        shouldRender[j] = true;
 
     //Rendering loop
     //------------------
@@ -251,6 +255,7 @@ int main() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         bool hit = false;
+
 
         //input---
         processInput(window);
@@ -279,20 +284,18 @@ int main() {
 
         //render cube---
         glBindVertexArray(VAO);
+        int hitIndex = -1;
         for (unsigned int i = 0; i < 10; i++) {
+            if (!shouldRender[i])
+                continue;
             glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i]);
+            model = glm::translate(model,cubePositions[i]);
             float angle = 20.0f * i;
 
-            if (i % 3 == 0) {
-                model = glm::rotate(model, (float) glfwGetTime(), glm::vec3(1.0f, 0.3f, 0.5f));
-            }
-            else if (pressToDie == true && i == 5) {
-                continue;
-            }
-            else {
-                model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            }
+
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+
+
 
             mainShader.setMat4("model", model);
 
@@ -343,7 +346,14 @@ int main() {
             double tExit = std::min(tMaxX, std::min(tMaxY, tMaxZ));
 
             if (tEnter <= tExit && tExit >= 0)
+            {
                 hit = true;
+                hitIndex = i;
+            }
+            if ((glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) && hitIndex != -1)
+                shouldRender[hitIndex] = false;
+
+
 
 
 
@@ -351,9 +361,8 @@ int main() {
 
         }
 
-        //press to die!!!
-        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-            pressToDie = true;
+
+
         //change opacity with up/down arrows---
         if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
             opac += 0.01f; // small increment per frame
