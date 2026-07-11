@@ -66,16 +66,27 @@ int main() {
 
     glEnable(GL_DEPTH_TEST);
 
-    //Attempting to fix relative pathing issue
+    //Reference RESOURCES_DIR in CMakeList.txt
+    std::string vertPath = std::string(RESOURCES_DIR) + "shaders/shaders.vert";
+    std::string fragPath = std::string(RESOURCES_DIR) + "shaders/shaders.frag";
 
-//std:: cout << "Resources dir: " << RESOURCES_DIR << std::endl;
-    std:: string vertPath = std::string(RESOURCES_DIR) + "shaders.vert";
-    //std:: cout << "vertPath: " << std::string(RESOURCES_DIR) + "shaders.vert" + "shaders.vert" << std::endl;
-    std:: string fragPath = std::string(RESOURCES_DIR) + "shaders.frag";
-    //std:: cout << "Resources dir: " << std::string(RESOURCES_DIR) + "shaders.frag" << std::endl;
-
-    Shader ourShader(vertPath.c_str(),
+    Shader mainShader(vertPath.c_str(),
                      fragPath.c_str());
+
+    //Crosshair shaders
+
+    std::string crossVPath = std::string(RESOURCES_DIR) + "shaders/crosshair.vert";
+    std::string crossFPath = std::string(RESOURCES_DIR) + "shaders/crosshair.frag";
+
+    Shader crossShader(crossVPath.c_str(),
+                        crossFPath.c_str());
+
+    float crosshairV[] = {
+        0.0, 0.02, 0.0, //Top
+        -0.02, -0.02, 0.0, //bottom left
+        0.02, -0.02, 0.0 //bottom right
+    };
+
 
     float vertices[] = {
         -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
@@ -134,6 +145,24 @@ int main() {
         glm::vec3(-1.3f, 1.0f, -1.5f)
     };
 
+    //Crosshair attribs/binding ------------------------------------------------------------
+    unsigned int crossVBO, crossVAO;
+    glGenVertexArrays(1, &crossVAO);
+    glGenBuffers(1, &crossVBO);
+
+    glBindVertexArray(crossVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, crossVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(crosshairV), crosshairV, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(0);
+
+    //End of crosshair --------------------------------------------------------------------------
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -203,9 +232,9 @@ int main() {
     stbi_image_free(data);
 
 
-    ourShader.use();
-    ourShader.setInt("texture1", 0);
-    ourShader.setInt("texture2", 1);
+    mainShader.use();
+    mainShader.setInt("texture1", 0);
+    mainShader.setInt("texture2", 1);
     float opac = 0.2f;
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -232,16 +261,16 @@ int main() {
         glBindTexture(GL_TEXTURE_2D, texture2);
 
         //Turn shader on---
-        ourShader.use();
+        mainShader.use();
 
         //pass projection matrix to shader
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f,
                                                 100.0f);
-        ourShader.setMat4("projection", projection);
+        mainShader.setMat4("projection", projection);
 
         // camera/view transformation
         glm::mat4 view = camera.GetViewMatrix();
-        ourShader.setMat4("view", view);
+        mainShader.setMat4("view", view);
 
         //render cube---
         glBindVertexArray(VAO);
@@ -256,7 +285,7 @@ int main() {
                 model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             }
 
-            ourShader.setMat4("model", model);
+            mainShader.setMat4("model", model);
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
@@ -267,11 +296,21 @@ int main() {
             opac += 0.01f; // small increment per frame
         if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
             opac -= 0.01f;
-        ourShader.setFloat("opacity", opac);
+        mainShader.setFloat("opacity", opac);
+
+        glDisable(GL_DEPTH_TEST);
+
+        crossShader.use();
+        glBindVertexArray(crossVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        glEnable(GL_DEPTH_TEST);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+
 
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
