@@ -2,6 +2,13 @@
 
 out vec4 CrossColor;
 
+uniform bool hit;
+
 void main() {
-    CrossColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+    if(hit){
+        CrossColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    } else {
+        CrossColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+
 }

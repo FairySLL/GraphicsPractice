@@ -8,6 +8,7 @@
 #include <cmath>
 #include <iostream>
 #include <string>
+#include <algorithm> //for min max
 
 //GLM
 #include <glm/glm/glm.hpp>
@@ -239,6 +240,7 @@ int main() {
     mainShader.setInt("texture2", 1);
     float opac = 0.2f;
 
+
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 
@@ -248,6 +250,7 @@ int main() {
         float currentFrame = (float)glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+        bool hit = false;
 
         //input---
         processInput(window);
@@ -283,13 +286,69 @@ int main() {
 
             if (i % 3 == 0) {
                 model = glm::rotate(model, (float) glfwGetTime(), glm::vec3(1.0f, 0.3f, 0.5f));
-            } else {
+            }
+            else if (pressToDie == true && i == 5) {
+                continue;
+            }
+            else {
                 model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             }
 
             mainShader.setMat4("model", model);
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
+
+            //check for crosshair overlap:
+
+            //Get inverse of model to use matrix multiplication to put our camera
+            //position and direction into local space
+            glm::mat4 localModel = glm::inverse(model);
+
+            //multiply by local(obj) space coords to translate WORLD position
+            //and WORLD direction into LOCAL space
+            //We need to do this by mat4 because that'ss how we build our model matrix initially,
+            //even though for actual check we will only need vec3's
+            glm::vec4 rayOriginLocal4 = localModel * glm::vec4(camera.Position, 1.0f);
+            glm::vec4 rayDirLocal4 = localModel * glm::vec4(camera.Front, 0.0f);
+
+            //Our vec3's!!!
+            glm::vec3 rayOriginLocal = glm::vec3(rayOriginLocal4);
+            glm::vec3 rayDirLocal = glm::vec3(rayDirLocal4);
+
+            // t = (boundary - origin) / direction
+            // we know boundary is [-0.5,0.5] for all xyz
+
+            double tMinX = (-0.5 - rayOriginLocal.x) / rayDirLocal.x;
+            double tMaxX = (0.5 - rayOriginLocal.x) / rayDirLocal.x;
+
+            //min could be larger than max depending on position in local space
+            //This ensures min is the enter and max is the exit point
+            if (tMinX > tMaxX)
+                std::swap(tMinX, tMaxX);
+
+            double tMinY = (-0.5 - rayOriginLocal.y) / rayDirLocal.y;
+            double tMaxY = (0.5 - rayOriginLocal.y) / rayDirLocal.y;
+
+            if (tMinY > tMaxY)
+                std::swap(tMinY, tMaxY);
+
+            double tMinZ = (-0.5 - rayOriginLocal.z) / rayDirLocal.z;
+            double tMaxZ = (0.5 - rayOriginLocal.z) / rayDirLocal.z;
+
+            if (tMinZ > tMaxZ)
+                std::swap(tMinZ, tMaxZ);
+
+            //Find the overlap
+            double tEnter = std::max(tMinX, std::max(tMinY, tMinZ));
+            double tExit = std::min(tMaxX, std::min(tMaxY, tMaxZ));
+
+            if (tEnter <= tExit && tExit >= 0)
+                hit = true;
+
+
+
+
+
         }
 
         //press to die!!!
@@ -305,6 +364,7 @@ int main() {
         glDisable(GL_DEPTH_TEST);
 
         crossShader.use();
+        crossShader.setBool("hit", hit);
         glBindVertexArray(crossVAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
