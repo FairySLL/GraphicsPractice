@@ -16,15 +16,15 @@
 #include <glm/glm/gtc/type_ptr.hpp>
 
 
-void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
-void processInput(GLFWwindow *window);
+void processInput(GLFWwindow* window);
 
-float upDown(GLFWwindow *window, float opac);
+float upDown(GLFWwindow* window, float opac);
 
-void mouse_callback(GLFWwindow *window, double xposIn, double yposIn);
+void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
 
-void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -39,18 +39,17 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 
-
-
-
-int main() {
+int main()
+{
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-    if (window == NULL) {
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    if (window == NULL)
+    {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
         return -1;
@@ -62,7 +61,8 @@ int main() {
     glfwSetScrollCallback(window, scroll_callback);
 
 
-    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
         std::cout << "Failed to initalize GLAD" << std::endl;
         return -1;
     }
@@ -75,7 +75,7 @@ int main() {
     std::string fragPath = std::string(RESOURCES_DIR) + "shaders/shaders.frag";
 
     Shader mainShader(vertPath.c_str(),
-                     fragPath.c_str());
+                      fragPath.c_str());
 
     //Crosshair shaders
 
@@ -83,7 +83,7 @@ int main() {
     std::string crossFPath = std::string(RESOURCES_DIR) + "shaders/crosshair.frag";
 
     Shader crossShader(crossVPath.c_str(),
-                        crossFPath.c_str());
+                       crossFPath.c_str());
 
     float crosshairV[] = {
         0.0, 0.04, 0.0, //Top
@@ -177,10 +177,10 @@ int main() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     //Position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     //Texture coord attribute
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) (3 * sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     // Textures ---------------------------------------------------------------------------
@@ -202,13 +202,16 @@ int main() {
     //load and generate the texture
     int width, height, nrChannels;
     stbi_set_flip_vertically_on_load(true);
-    std:: string contPath = std::string(RESOURCES_DIR) + "container.jpg";
-    unsigned char *data = stbi_load(contPath.c_str(), &width,
+    std::string contPath = std::string(RESOURCES_DIR) + "container.jpg";
+    unsigned char* data = stbi_load(contPath.c_str(), &width,
                                     &height, &nrChannels, 0);
-    if (data) {
+    if (data)
+    {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
-    } else {
+    }
+    else
+    {
         std::cout << "Failed to load texture" << std::endl;
     }
     stbi_image_free(data);
@@ -224,13 +227,16 @@ int main() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    std:: string facePath = std::string(RESOURCES_DIR) + "awesomeface.png";
+    std::string facePath = std::string(RESOURCES_DIR) + "awesomeface.png";
     data = stbi_load(facePath.c_str(), &width, &height,
                      &nrChannels, 0);
-    if (data) {
+    if (data)
+    {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
-    } else {
+    }
+    else
+    {
         std::cout << "Failed to load texture" << std::endl;
     }
     stbi_image_free(data);
@@ -245,12 +251,13 @@ int main() {
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     bool shouldRender[10];
-    for(int j = 0; j < 10; j++)
+    for (int j = 0; j < 10; j++)
         shouldRender[j] = true;
 
     //Rendering loop
     //------------------
-    while (!glfwWindowShouldClose(window)) {
+    while (!glfwWindowShouldClose(window))
+    {
         float currentFrame = (float)glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -274,7 +281,7 @@ int main() {
         mainShader.use();
 
         //pass projection matrix to shader
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f,
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f,
                                                 100.0f);
         mainShader.setMat4("projection", projection);
 
@@ -285,16 +292,16 @@ int main() {
         //render cube---
         glBindVertexArray(VAO);
         int hitIndex = -1;
-        for (unsigned int i = 0; i < 10; i++) {
+        for (unsigned int i = 0; i < 10; i++)
+        {
             if (!shouldRender[i])
                 continue;
             glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model,cubePositions[i]);
+            model = glm::translate(model, cubePositions[i]);
             float angle = 20.0f * i;
 
 
             model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-
 
 
             mainShader.setMat4("model", model);
@@ -352,15 +359,7 @@ int main() {
             }
             if ((glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) && hitIndex != -1)
                 shouldRender[hitIndex] = false;
-
-
-
-
-
-
-
         }
-
 
 
         //change opacity with up/down arrows---
@@ -384,7 +383,6 @@ int main() {
     }
 
 
-
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 
@@ -394,11 +392,13 @@ int main() {
 }
 
 //helper functions ---
-void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
     glViewport(0, 0, width, height);
 }
 
-void processInput(GLFWwindow *window) {
+void processInput(GLFWwindow* window)
+{
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
@@ -412,18 +412,21 @@ void processInput(GLFWwindow *window) {
         camera.ProcessKeyboard(RIGHT, deltaTime);
 }
 
-float upDown(GLFWwindow *window, float opac) {
+float upDown(GLFWwindow* window, float opac)
+{
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
         return opac + 0.1;
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
         return opac - 0.1;
 }
 
-void mouse_callback(GLFWwindow *window, double xposIn, double yposIn) {
+void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
+{
     float xpos = static_cast<float>(xposIn);
     float ypos = static_cast<float>(yposIn);
 
-    if (firstMouse) {
+    if (firstMouse)
+    {
         lastX = xpos;
         lastY = ypos;
         firstMouse = false;
@@ -438,6 +441,7 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn) {
     camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
-void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
     camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
