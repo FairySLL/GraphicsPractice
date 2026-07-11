@@ -37,7 +37,7 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-
+bool pressToDie = false;
 
 
 int main() {
@@ -292,7 +292,9 @@ int main() {
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
-
+        //press to die!!!
+        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+            pressToDie = true;
         //change opacity with up/down arrows---
         if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
             opac += 0.01f; // small increment per frame
