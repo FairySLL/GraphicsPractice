@@ -171,6 +171,8 @@ int main() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
+        lightPos = glm::vec3(deltaTime * lightPos.x + sin(glfwGetTime()) , lightPos.y, deltaTime * lightPos.z + cos(glfwGetTime()));
+
         //input---
         processInput(window);
 
@@ -182,7 +184,6 @@ int main() {
         lightShader.use();
         lightShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
         lightShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-        //This is dumb, fix this method (in shader.h) to take either glm::vec3 or 3 floats
         lightShader.setVec3("lightPos", lightPos);
 
         //pass projection matrix to shader
@@ -209,7 +210,6 @@ int main() {
         lampShader.setMat4("projection", projection);
         lampShader.setMat4("view", view);
         model = glm::mat4(1.0f);
-        //glm::vec3 moveLightPos = glm::vec3(lightPos.x * glfwGetTime(), lightPos.y, lightPos.z * glfwGetTime());
         model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.5f)); //smaller cube :)
         lampShader.setMat4("model", model);
