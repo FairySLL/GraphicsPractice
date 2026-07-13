@@ -171,7 +171,7 @@ int main() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        lightPos = glm::vec3(deltaTime * lightPos.x + sin(glfwGetTime()) , lightPos.y, deltaTime * lightPos.z + cos(glfwGetTime()));
+        //lightPos = glm::vec3(deltaTime * lightPos.x + sin(glfwGetTime()) , lightPos.y, deltaTime * lightPos.z + cos(glfwGetTime()));
 
         //input---
         processInput(window);
@@ -180,11 +180,27 @@ int main() {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        //dynamic light color
+        glm::vec3 lightColor;
+        lightColor.x = sin(glfwGetTime() * 2.0f);
+        lightColor.y = sin(glfwGetTime() * 0.7f);
+        lightColor.z = sin(glfwGetTime() * 1.3f);
+
+        glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+
         //Turn shader on---
         lightShader.use();
         lightShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
         lightShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
         lightShader.setVec3("lightPos", lightPos);
+        lightShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+        lightShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+        lightShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+        lightShader.setFloat("material.shininess", 32);
+        lightShader.setVec3("light.ambient", ambientColor);
+        lightShader.setVec3("light.diffuse", diffuseColor); //darken diffuse a bit
+        lightShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
         //pass projection matrix to shader
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f,
