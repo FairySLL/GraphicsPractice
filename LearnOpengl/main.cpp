@@ -227,11 +227,11 @@ glBindVertexArray(VAO);
         lightShader.setVec3("light.position", lightPos);
         lightShader.setVec3("viewPos", camera.Position);
 
-        lightShader.setVec3("light.ambient", 0.2f, 0.2f, 0.0f);
-        lightShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.0f);
+        lightShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+        lightShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
         lightShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
-        lightShader.setVec3("material.specular", 0.5f, 0.5f, 0.0f);
+        lightShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
         lightShader.setFloat("material.shininess", 64.0f);
 
         //pass projection matrix to shader
