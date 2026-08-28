@@ -236,7 +236,7 @@ glBindVertexArray(VAO);
 
         //Turn shader on---
         lightShader.use();
-        lightShader.setVec3("light.position", lightPos);
+        lightShader.setVec3("light.direction", -0.2f, -1.0f, -0.3f);
         lightShader.setVec3("viewPos", camera.Position);
 
         lightShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
@@ -265,7 +265,6 @@ glBindVertexArray(VAO);
 
         //render cube---
         glBindVertexArray(VAO);
-        glBindVertexArray(VAO);
         for (unsigned int i = 0; i < 10; i++) {
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
@@ -284,7 +283,7 @@ glBindVertexArray(VAO);
 
 
         //render light cube
-
+/*
         lampShader.use();
         lampShader.setMat4("projection", projection);
         lampShader.setMat4("view", view);
@@ -295,7 +294,7 @@ glBindVertexArray(VAO);
 
         glBindVertexArray(lightVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-
+*/
 
 
 
