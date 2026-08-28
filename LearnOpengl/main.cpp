@@ -236,7 +236,9 @@ glBindVertexArray(VAO);
 
         //Turn shader on---
         lightShader.use();
-        lightShader.setVec3("light.position", lightPos);
+        lightShader.setVec3("light.position", camera.Position);
+        lightShader.setVec3("light.direction", camera.Front);
+        lightShader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
         lightShader.setVec3("viewPos", camera.Position);
 
         lightShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
