@@ -276,11 +276,12 @@ glBindVertexArray(VAO);
             model = glm::translate(model, cubePositions[i]);
             float angle = 20.0f * i;
 
-            if (i % 3 == 0) {
+            /*if (i % 3 == 0) {
                 model = glm::rotate(model, (float) glfwGetTime(), glm::vec3(1.0f, 0.3f, 0.5f));
             } else {
                 model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            }
+            }*/
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 
             lightShader.setMat4("model", model);
 
