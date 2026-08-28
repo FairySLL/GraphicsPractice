@@ -204,6 +204,7 @@ glBindVertexArray(VAO);
 
     lightShader.use();
     lightShader.setInt("material.diffuse", 0);
+    lightShader.setInt("material.specular", 1);
 
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -239,6 +240,7 @@ glBindVertexArray(VAO);
         lightShader.setVec3("light.position", camera.Position);
         lightShader.setVec3("light.direction", camera.Front);
         lightShader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+        lightShader.setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
         lightShader.setVec3("viewPos", camera.Position);
 
         lightShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
@@ -292,7 +294,7 @@ glBindVertexArray(VAO);
 
 
         //render light cube
-
+/*
         lampShader.use();
         lampShader.setMat4("projection", projection);
         lampShader.setMat4("view", view);
@@ -303,7 +305,7 @@ glBindVertexArray(VAO);
 
         glBindVertexArray(lightVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-
+*/
 
 
 
