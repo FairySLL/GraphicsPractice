@@ -6,13 +6,16 @@ set(CMAKE_CXX_STANDARD 20)
 
 
 find_package(OpenGL REQUIRED)
-find_package(glfw3 REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(assimp CONFIG REQUIRED)
 
 add_executable(LearnOpengl main.cpp src/glad.c
         shader.cpp
         shader.h
         image.h
-        camera.h)
+        camera.h
+        mesh.h
+)
 
 target_compile_definitions(LearnOpengl PRIVATE
 RESOURCES_DIR="${CMAKE_SOURCE_DIR}/resources/")
@@ -20,9 +23,10 @@ RESOURCES_DIR="${CMAKE_SOURCE_DIR}/resources/")
 
 target_include_directories(LearnOpengl PRIVATE include)
 
-target_link_libraries(LearnOpengl
+target_link_libraries(LearnOpengl PRIVATE
     OpenGL::GL
     glfw
-        dl
+        assimp::assimp
+        ${CMAKE_DL_LIBS}
     )
 
